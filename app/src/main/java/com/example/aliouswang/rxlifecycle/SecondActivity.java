@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.widget.TextView;
 
 import com.aliouswang.rxlifecycle.RxLifeCycleActivity;
+import com.aliouswang.rxlifecycle.RxLifeCycleEvent;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,8 +28,12 @@ public class SecondActivity extends RxLifeCycleActivity{
 
         tv_hello = findViewById(R.id.tv_hello);
 
-        mockHttpRequestWithoutDispose();
+//        mockHttpRequestWithoutDispose();
 //        mockHttp();
+
+        testBindUtil();
+
+
     }
 
     private void mockHttpRequestWithoutDispose() {
@@ -40,6 +45,13 @@ public class SecondActivity extends RxLifeCycleActivity{
 
     private void disposeWithRxLifeCycle() {
         bind(Observable.just("mock http without dispose"))
+                .delay(10, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> tv_hello.setText(s));
+    }
+
+    private void testBindUtil() {
+        bindUntil(Observable.just("mock bind until"), RxLifeCycleEvent.ON_DESTORY)
                 .delay(10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> tv_hello.setText(s));

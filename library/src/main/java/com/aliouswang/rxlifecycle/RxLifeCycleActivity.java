@@ -5,6 +5,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 
 import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
 
 /**
@@ -29,10 +31,18 @@ public class RxLifeCycleActivity extends AppCompatActivity{
                 observable.takeUntil(mDisposeSubject));
     }
 
+    private Disposable disposable;
     protected <T> Observable<T> bindUntil(Observable<T> observable, RxLifeCycleEvent event) {
         return observable.compose(upstream ->
                 observable.takeUntil(mDisposeSubject.filter(
-                        rxLifeCycleEvent -> rxLifeCycleEvent.getValue() >= event.getValue())));
+                        rxLifeCycleEvent -> rxLifeCycleEvent.getValue() >= event.getValue()))).doOnSubscribe(
+                new Consumer<Disposable>() {
+                    @Override
+                    public void accept(Disposable d) throws Exception {
+                        disposable = d;
+                    }
+                }
+        );
     }
 
     @Override
@@ -63,5 +73,11 @@ public class RxLifeCycleActivity extends AppCompatActivity{
     protected void onDestroy() {
         super.onDestroy();
         mDisposeSubject.onNext(RxLifeCycleEvent.ON_DESTORY);
+
+        if (disposable != null) {
+            if (!disposable.isDisposed()) {
+                disposable.dispose();
+            }
+        }
     }
 }

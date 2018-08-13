@@ -2,8 +2,9 @@ package com.example.aliouswang.rxlifecycle;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
+
+import com.aliouswang.rxlifecycle.RxLifeCycleActivity;
 
 import java.util.concurrent.TimeUnit;
 
@@ -15,7 +16,7 @@ import io.reactivex.disposables.Disposable;
  * Created by aliouswang on 2018/8/13.
  */
 
-public class SecondActivity extends AppCompatActivity{
+public class SecondActivity extends RxLifeCycleActivity{
 
     private TextView tv_hello;
 
@@ -32,6 +33,13 @@ public class SecondActivity extends AppCompatActivity{
 
     private void mockHttpRequestWithoutDispose() {
         Observable.just("mock http without dispose")
+                .delay(10, TimeUnit.SECONDS)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(s -> tv_hello.setText(s));
+    }
+
+    private void disposeWithRxLifeCycle() {
+        bind(Observable.just("mock http without dispose"))
                 .delay(10, TimeUnit.SECONDS)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(s -> tv_hello.setText(s));

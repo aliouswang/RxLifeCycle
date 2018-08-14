@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import io.reactivex.Observable;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
 import io.reactivex.subjects.BehaviorSubject;
 
 /**
@@ -15,7 +14,12 @@ import io.reactivex.subjects.BehaviorSubject;
 
 public class RxLifeCycleActivity extends AppCompatActivity{
 
+    private BehaviorSubject<RxLifeCycleEvent> mDisposeSubject = BehaviorSubject.create();
 
+    protected <T> Observable<T> bind(Observable<T> observable) {
+        return observable.compose(upstream ->
+                observable.takeUntil(mDisposeSubject));
+    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -24,25 +28,14 @@ public class RxLifeCycleActivity extends AppCompatActivity{
         mDisposeSubject.onNext(RxLifeCycleEvent.ON_CREATE);
     }
 
-    private BehaviorSubject<RxLifeCycleEvent> mDisposeSubject = BehaviorSubject.create();
 
-    protected <T> Observable<T> bind(Observable<T> observable) {
-        return observable.compose(upstream ->
-                observable.takeUntil(mDisposeSubject));
-    }
 
     private Disposable disposable;
+
     protected <T> Observable<T> bindUntil(Observable<T> observable, RxLifeCycleEvent event) {
         return observable.compose(upstream ->
                 observable.takeUntil(mDisposeSubject.filter(
-                        rxLifeCycleEvent -> rxLifeCycleEvent.getValue() >= event.getValue()))).doOnSubscribe(
-                new Consumer<Disposable>() {
-                    @Override
-                    public void accept(Disposable d) throws Exception {
-                        disposable = d;
-                    }
-                }
-        );
+                        rxLifeCycleEvent -> rxLifeCycleEvent.getValue() >= event.getValue())));
     }
 
     @Override

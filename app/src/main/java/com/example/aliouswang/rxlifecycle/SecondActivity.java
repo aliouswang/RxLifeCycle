@@ -34,6 +34,8 @@ public class SecondActivity extends RxLifeCycleActivity{
         testBindUtil();
 
 
+
+
     }
 
     private void mockHttpRequestWithoutDispose() {

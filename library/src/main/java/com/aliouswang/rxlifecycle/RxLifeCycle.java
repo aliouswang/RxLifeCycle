@@ -31,7 +31,8 @@ public class RxLifeCycle {
 
     public static RxLifeCycle bind(Activity activity) {
         FragmentManager fragmentManager = activity.getFragmentManager();
-        RxLifeCycleFragment lifeCycleFragment = (RxLifeCycleFragment) fragmentManager.findFragmentByTag(LIFECYCLE_FRAGMNET_TAG);
+        RxLifeCycleFragment lifeCycleFragment = (RxLifeCycleFragment)
+                fragmentManager.findFragmentByTag(LIFECYCLE_FRAGMNET_TAG);
         if (lifeCycleFragment == null) {
             lifeCycleFragment = new RxLifeCycleFragment();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
@@ -48,7 +49,8 @@ public class RxLifeCycle {
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN_MR1)
     public static RxLifeCycle bind(Fragment fragment) {
         FragmentManager fragmentManager = fragment.getChildFragmentManager();
-        RxLifeCycleFragment lifeCycleFragment = (RxLifeCycleFragment) fragmentManager.findFragmentByTag(LIFECYCLE_FRAGMNET_TAG);
+        RxLifeCycleFragment lifeCycleFragment = (RxLifeCycleFragment)
+                fragmentManager.findFragmentByTag(LIFECYCLE_FRAGMNET_TAG);
         if (lifeCycleFragment == null) {
             lifeCycleFragment = new RxLifeCycleFragment();
             FragmentTransaction transaction = fragmentManager.beginTransaction();
